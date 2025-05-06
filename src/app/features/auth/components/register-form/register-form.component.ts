@@ -8,6 +8,13 @@ import { FileInputComponent } from '../../../../shared/atoms/file-input/file-inp
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 
+interface RegisterFormData {
+  email: string;
+  name: string;
+  password: string;
+  avatar: string;
+}
+
 @Component({
     selector: 'app-register-form',
     standalone: true,
@@ -166,8 +173,8 @@ export class RegisterFormComponent {
     return '';
   }
 
-  onAvatarSelected(base64: string): void {
-    this.registerForm.patchValue({ avatar: base64 });
+  onAvatarSelected(url: string): void {
+    this.registerForm.patchValue({ avatar: url });
   }
 
   onSubmit(): void {
@@ -175,7 +182,9 @@ export class RegisterFormComponent {
       this.loading = true;
       this.error = '';
 
-      this.authService.register(this.registerForm.value).subscribe({
+      const formData: RegisterFormData = this.registerForm.value;
+
+      this.authService.register(formData).subscribe({
         next: () => {
           this.router.navigate(['/']);
         },

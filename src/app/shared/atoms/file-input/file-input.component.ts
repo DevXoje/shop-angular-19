@@ -1,6 +1,13 @@
-import { Component, input, output, model} from '@angular/core';
+import { Component, input, output, model, inject } from '@angular/core';
 
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FileUploadService } from '../../../core/infrastructure/services/file-upload.service';
+
+interface FileUploadResponse {
+  originalname: string;
+  filename: string;
+  location: string;
+}
 
 @Component({
   selector: 'app-file-input',
@@ -157,6 +164,8 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
   `]
 })
 export class FileInputComponent implements ControlValueAccessor {
+  private readonly fileUploadService = inject(FileUploadService);
+
   id = input('');
   label = input('');
   accept = input('image/*');
@@ -227,14 +236,26 @@ export class FileInputComponent implements ControlValueAccessor {
       return;
     }
 
+    // Create a preview URL
     const reader = new FileReader();
     reader.onload = (e) => {
-      const base64 = e.target?.result as string;
-      this.previewUrl = base64;
-      this.onChange(base64);
-      this.fileSelected.emit(base64);
-      this.error.set('');
+      this.previewUrl = e.target?.result as string;
     };
     reader.readAsDataURL(file);
+
+    // Upload the file
+    this.fileUploadService.uploadFile(file).subscribe({
+      next: (response: FileUploadResponse) => {
+        this.onChange(response.location);
+        this.fileSelected.emit(response.location);
+        this.error.set('');
+      },
+      error: (error: unknown) => {
+        this.error.set('Failed to upload image. Please try again.');
+        this.previewUrl = null;
+        this.onChange(null);
+        this.fileSelected.emit('');
+      }
+    });
   }
 } 
