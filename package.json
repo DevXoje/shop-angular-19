@@ -8,7 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:ci": "ng test --watch=false --progress=false --browsers=ChromeHeadless",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
     "prepare": "husky"
@@ -53,5 +53,14 @@
     "lint-staged": "^15.0.0",
     "prettier": "^3.0.0",
     "typescript": "~5.5.2"
+  },
+  "lint-staged": {
+    "*.{ts,html}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{scss,json}": [
+      "prettier --write"
+    ]
   }
 }

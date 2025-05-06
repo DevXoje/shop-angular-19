@@ -1,3 +1,4 @@
+// Test file for RegisterFormComponent
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, provideRouter } from '@angular/router';
@@ -26,15 +27,10 @@ describe('RegisterFormComponent', () => {
   let fileUploadService: jasmine.SpyObj<FileUploadService>;
   let router: Router;
 
-  const mockAuthService = {
-    register: jasmine.createSpy('register'),
-  };
-
-  const mockFileUploadService = {
-    uploadFile: jasmine.createSpy('uploadFile'),
-  };
-
   beforeEach(async () => {
+    const mockAuthService = jasmine.createSpyObj('AuthService', ['register']);
+    const mockFileUploadService = jasmine.createSpyObj('FileUploadService', ['uploadFile']);
+
     await TestBed.configureTestingModule({
       imports: [
         RegisterFormComponent,
@@ -194,8 +190,36 @@ describe('RegisterFormComponent', () => {
   }));
 
   it('should not submit form when invalid', () => {
+    // Start with an empty form (which is invalid by default)
+    expect(component.registerForm.valid).toBeFalsy();
+
+    // Try to submit the empty form
     component.onSubmit();
     expect(fileUploadService.uploadFile).not.toHaveBeenCalled();
     expect(authService.register).not.toHaveBeenCalled();
+
+    // Try with invalid values
+    component.registerForm.setValue({
+      [RegisterFormField.Email]: 'invalid-email',
+      [RegisterFormField.Name]: '',
+      [RegisterFormField.Password]: '12345',
+      [RegisterFormField.Avatar]: null,
+    });
+
+    // Verify form is still invalid
+    expect(component.registerForm.valid).toBeFalsy();
+
+    // Submit again with invalid values
+    component.onSubmit();
+    expect(fileUploadService.uploadFile).not.toHaveBeenCalled();
+    expect(authService.register).not.toHaveBeenCalled();
+
+    // Verify that fields are marked as touched after submission attempt
+    Object.keys(component.registerForm.controls).forEach(key => {
+      expect(component.registerForm.get(key)?.touched).toBeTruthy();
+    });
+
+    // Verify that the form is still invalid after all attempts
+    expect(component.registerForm.valid).toBeFalsy();
   });
 });

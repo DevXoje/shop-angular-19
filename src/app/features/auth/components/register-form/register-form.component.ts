@@ -23,7 +23,11 @@ import { RegisterFormData, RegisterFormField } from './register-form.types';
   ],
   template: `
     <app-auth-layout>
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="registerForm.valid && onSubmit()"
+        class="register-form"
+      >
         <h2 class="register-form__title">Create an account</h2>
 
         <app-input
@@ -180,36 +184,51 @@ export class RegisterFormComponent {
   }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
-      this.loading = true;
-      this.error = '';
-
-      const formData = this.registerForm.value;
-      const avatarFile = formData[RegisterFormField.Avatar] as File;
-
-      // First upload the file, then register the user
-      this.fileUploadService
-        .uploadFile(avatarFile)
-        .pipe(
-          switchMap(response => {
-            const registerData: RegisterFormData = {
-              ...formData,
-              [RegisterFormField.Avatar]: response.location,
-            };
-            return this.authService.register(registerData);
-          }),
-          finalize(() => {
-            this.loading = false;
-          }),
-        )
-        .subscribe({
-          next: () => {
-            this.router.navigate(['/']);
-          },
-          error: error => {
-            this.error = error.error?.message || 'An error occurred during registration';
-          },
-        });
+    // Prevent submission if form is invalid
+    if (this.registerForm.invalid || this.loading) {
+      // Mark all fields as touched to trigger validation messages
+      Object.keys(this.registerForm.controls).forEach(key => {
+        const control = this.registerForm.get(key);
+        control?.markAsTouched();
+      });
+      return;
     }
+
+    // Get form data before setting loading state
+    const formData = this.registerForm.value;
+    const avatarFile = formData[RegisterFormField.Avatar] as File;
+
+    // Validate required data
+    if (!avatarFile) {
+      this.error = 'Avatar file is required';
+      return;
+    }
+
+    this.loading = true;
+    this.error = '';
+
+    // First upload the file, then register the user
+    this.fileUploadService
+      .uploadFile(avatarFile)
+      .pipe(
+        switchMap(response => {
+          const registerData: RegisterFormData = {
+            ...formData,
+            [RegisterFormField.Avatar]: response.location,
+          };
+          return this.authService.register(registerData);
+        }),
+        finalize(() => {
+          this.loading = false;
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/']);
+        },
+        error: error => {
+          this.error = error.error?.message || 'An error occurred during registration';
+        },
+      });
   }
 }
