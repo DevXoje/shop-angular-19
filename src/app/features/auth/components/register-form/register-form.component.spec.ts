@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import { AuthResponse } from '../../../../core/domain/models/user.model';
+import { User, UserRole } from '../../../../core/domain/models/user.model';
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
 import { FileUploadService } from '../../../../core/infrastructure/services/file-upload.service';
 import { ButtonComponent } from '../../../../shared/atoms/button/button.component';
@@ -132,9 +132,15 @@ describe('RegisterFormComponent', () => {
       filename: 'test.jpg',
       location: 'https://example.com/avatar.jpg',
     };
-    const mockAuthResponse: AuthResponse = {
-      access_token: 'mock-access-token',
-      refresh_token: 'mock-refresh-token',
+    const mockAuthResponse: User = {
+      id: 1,
+      email: 'test@example.com',
+      password: 'password123',
+      name: 'Test User',
+      avatar: 'https://example.com/avatar.jpg',
+      role: UserRole.CUSTOMER,
+      creationAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     const mockRegisterData = {
       email: 'test@example.com',

@@ -5,6 +5,8 @@ export interface User {
   name: string;
   role: UserRole;
   avatar: string;
+  creationAt: string;
+  updatedAt: string;
 }
 
 export type UserRegister = Pick<User, 'email' | 'password' | 'name' | 'avatar'>;

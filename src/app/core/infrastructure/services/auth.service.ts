@@ -34,10 +34,17 @@ export class AuthService implements IAuthService {
     });
   }
 
-  register(user: UserRegister): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.usersUrl}`, user)
-      .pipe(tap(response => this.handleAuthResponse(response)));
+  register(user: UserRegister): Observable<User> {
+    return this.http.post<User>(`${this.usersUrl}`, user).pipe(
+      tap(() => {
+        // After successful registration, automatically log in
+        const credentials: UserCredentials = {
+          email: user.email,
+          password: user.password,
+        };
+        this.login(credentials).subscribe();
+      }),
+    );
   }
 
   getCurrentUser(): Observable<User | null> {
@@ -76,6 +83,8 @@ export class AuthService implements IAuthService {
     if (!token) return;
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    console.log({ headers, token });
+
     this.http.get<User>(`${this.authUrl}/profile`, { headers }).subscribe({
       next: user => this.currentUserSubject.next(user),
       error: () => this.clearAuthData(),
