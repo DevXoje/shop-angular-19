@@ -10,7 +10,7 @@ interface FileUploadResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FileUploadService {
   private readonly http = inject(HttpClient);
@@ -22,4 +22,4 @@ export class FileUploadService {
 
     return this.http.post<FileUploadResponse>(`${this.apiUrl}/files/upload`, formData);
   }
-} 
+}

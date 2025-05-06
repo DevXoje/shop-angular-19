@@ -5,12 +5,12 @@ import { ButtonComponent } from '../../../../shared/atoms/button/button.componen
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
 
 @Component({
-    selector: 'app-profile',
-    imports: [CommonModule, ButtonComponent],
-    template: `
+  selector: 'app-profile',
+  imports: [CommonModule, ButtonComponent],
+  template: `
     <div class="profile">
       <h2 class="profile__title">Profile</h2>
-    
+
       @if (user$ | async; as user) {
         <div class="profile__info">
           <div class="profile__field">
@@ -27,60 +27,59 @@ import { AuthService } from '../../../../core/infrastructure/services/auth.servi
           </div>
         </div>
       }
-    
-      <app-button
-        variant="secondary"
-        (clicked)="onLogout()"
-        >
-        Logout
-      </app-button>
+
+      <app-button variant="secondary" (clicked)="onLogout()"> Logout </app-button>
     </div>
+  `,
+  styles: [
+    `
+      .profile {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        max-width: 600px;
+        width: 100%;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow:
+          0 1px 3px 0 rgb(0 0 0 / 0.1),
+          0 1px 2px -1px rgb(0 0 0 / 0.1);
+      }
+
+      .profile__title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 0;
+        text-align: center;
+      }
+
+      .profile__info {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .profile__field {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: #f9fafb;
+        border-radius: 0.375rem;
+      }
+
+      .profile__label {
+        font-weight: 500;
+        color: #374151;
+        min-width: 100px;
+      }
+
+      .profile__value {
+        color: #6b7280;
+      }
     `,
-    styles: [`
-    .profile {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      max-width: 600px;
-      width: 100%;
-      padding: 2rem;
-      background-color: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    }
-
-    .profile__title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0;
-      text-align: center;
-    }
-
-    .profile__info {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .profile__field {
-      display: flex;
-      gap: 1rem;
-      padding: 1rem;
-      background-color: #F9FAFB;
-      border-radius: 0.375rem;
-    }
-
-    .profile__label {
-      font-weight: 500;
-      color: #374151;
-      min-width: 100px;
-    }
-
-    .profile__value {
-      color: #6B7280;
-    }
-  `]
+  ],
 })
 export class ProfileComponent {
   private readonly authService = inject(AuthService);
@@ -92,7 +91,7 @@ export class ProfileComponent {
     this.authService.logout().subscribe({
       next: () => {
         this.router.navigate(['/auth/login']);
-      }
+      },
     });
   }
-} 
+}

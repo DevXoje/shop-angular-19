@@ -6,4 +6,4 @@ export const environment = {
   defaultLanguage: 'en',
   supportedLanguages: ['en', 'es'],
   // Add other environment-specific variables here
-}; 
+};

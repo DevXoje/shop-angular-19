@@ -8,5 +8,5 @@ export const environment = {
   // Development-specific settings
   enableDebugTools: true,
   logLevel: 'debug',
-  mockApi: true
-}; 
+  mockApi: true,
+};

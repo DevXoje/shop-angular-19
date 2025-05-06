@@ -6,13 +6,13 @@ import { User, UserCredentials, AuthResponse, UserRegister } from '../../domain/
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService implements IAuthService {
   private readonly http = inject(HttpClient);
   private readonly authUrl = `${environment.apiUrl}/auth`;
   private readonly usersUrl = `${environment.apiUrl}/users`;
-  
+
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -21,9 +21,9 @@ export class AuthService implements IAuthService {
   }
 
   login(credentials: UserCredentials): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.authUrl}/login`, credentials).pipe(
-      tap(response => this.handleAuthResponse(response))
-    );
+    return this.http
+      .post<AuthResponse>(`${this.authUrl}/login`, credentials)
+      .pipe(tap(response => this.handleAuthResponse(response)));
   }
 
   logout(): Observable<void> {
@@ -35,9 +35,9 @@ export class AuthService implements IAuthService {
   }
 
   register(user: UserRegister): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.usersUrl}`, user).pipe(
-      tap(response => this.handleAuthResponse(response))
-    );
+    return this.http
+      .post<AuthResponse>(`${this.usersUrl}`, user)
+      .pipe(tap(response => this.handleAuthResponse(response)));
   }
 
   getCurrentUser(): Observable<User | null> {
@@ -77,8 +77,8 @@ export class AuthService implements IAuthService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     this.http.get<User>(`${this.authUrl}/profile`, { headers }).subscribe({
-      next: (user) => this.currentUserSubject.next(user),
-      error: () => this.clearAuthData()
+      next: user => this.currentUserSubject.next(user),
+      error: () => this.clearAuthData(),
     });
   }
-} 
+}

@@ -1,5 +1,4 @@
-import { Component, Input } from '@angular/core';
-
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -13,20 +12,22 @@ import { RouterModule } from '@angular/router';
       </div>
     </div>
   `,
-  styles: [`
-    .auth-layout {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #F3F4F6;
-      padding: 1rem;
-    }
+  styles: [
+    `
+      .auth-layout {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f3f4f6;
+        padding: 1rem;
+      }
 
-    .auth-layout__container {
-      width: 100%;
-      max-width: 400px;
-    }
-  `]
+      .auth-layout__container {
+        width: 100%;
+        max-width: 400px;
+      }
+    `,
+  ],
 })
-export class AuthLayoutComponent {} 
+export class AuthLayoutComponent {}

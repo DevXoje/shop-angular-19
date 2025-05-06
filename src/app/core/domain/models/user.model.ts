@@ -7,11 +7,11 @@ export interface User {
   avatar: string;
 }
 
-export type UserRegister = Pick<User, 'email' | 'password' | 'name' |'avatar'>;
+export type UserRegister = Pick<User, 'email' | 'password' | 'name' | 'avatar'>;
 
 export enum UserRole {
   CUSTOMER = 'customer',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
 }
 
 export interface UserCredentials {
@@ -22,4 +22,4 @@ export interface UserCredentials {
 export interface AuthResponse {
   access_token: string;
   refresh_token: string;
-} 
+}
