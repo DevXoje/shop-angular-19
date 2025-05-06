@@ -1,16 +1,17 @@
 export interface User {
-  id: string;
+  id: number;
   email: string;
-  firstName: string;
-  lastName: string;
+  password: string;
+  name: string;
   role: UserRole;
-  createdAt: Date;
-  updatedAt: Date;
+  avatar: string;
 }
 
+export type UserRegister = Pick<User, 'email' | 'password' | 'name' |'avatar'>;
+
 export enum UserRole {
-  CUSTOMER = 'CUSTOMER',
-  ADMIN = 'ADMIN'
+  CUSTOMER = 'customer',
+  ADMIN = 'admin'
 }
 
 export interface UserCredentials {
@@ -19,6 +20,6 @@ export interface UserCredentials {
 }
 
 export interface AuthResponse {
-  user: User;
-  token: string;
+  access_token: string;
+  refresh_token: string;
 } 

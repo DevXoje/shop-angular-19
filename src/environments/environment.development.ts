@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
+  apiUrl: 'https://api.escuelajs.co/api/v1',
   appName: 'Shop Angular (Dev)',
   version: '1.0.0-dev',
   defaultLanguage: 'en',
