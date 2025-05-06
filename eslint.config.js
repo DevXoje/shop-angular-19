@@ -25,7 +25,23 @@ module.exports = [
         document: 'readonly',
         navigator: 'readonly',
         location: 'readonly',
-        console: 'readonly'
+        console: 'readonly',
+        // Jasmine globals
+        describe: 'readonly',
+        fdescribe: 'readonly',
+        xdescribe: 'readonly',
+        it: 'readonly',
+        fit: 'readonly',
+        xit: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        expect: 'readonly',
+        pending: 'readonly',
+        fail: 'readonly',
+        spyOn: 'readonly',
+        jasmine: 'readonly'
       }
     },
     plugins: {

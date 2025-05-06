@@ -7,7 +7,7 @@ import { FileInputComponent } from '../../../../shared/atoms/file-input/file-inp
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
 import { FileUploadService } from '../../../../core/infrastructure/services/file-upload.service';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
-import { switchMap } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
 import { RegisterFormData, RegisterFormField } from './register-form.types';
 
 @Component({
@@ -198,6 +198,9 @@ export class RegisterFormComponent {
             };
             return this.authService.register(registerData);
           }),
+          finalize(() => {
+            this.loading = false;
+          }),
         )
         .subscribe({
           next: () => {
@@ -205,7 +208,6 @@ export class RegisterFormComponent {
           },
           error: error => {
             this.error = error.error?.message || 'An error occurred during registration';
-            this.loading = false;
           },
         });
     }
