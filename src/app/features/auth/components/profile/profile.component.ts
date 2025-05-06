@@ -5,10 +5,9 @@ import { ButtonComponent } from '../../../../shared/atoms/button/button.componen
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, ButtonComponent],
-  template: `
+    selector: 'app-profile',
+    imports: [CommonModule, ButtonComponent],
+    template: `
     <div class="profile">
       <h2 class="profile__title">Profile</h2>
       
@@ -37,7 +36,7 @@ import { AuthService } from '../../../../core/infrastructure/services/auth.servi
       </app-button>
     </div>
   `,
-  styles: [`
+    styles: [`
     .profile {
       display: flex;
       flex-direction: column;

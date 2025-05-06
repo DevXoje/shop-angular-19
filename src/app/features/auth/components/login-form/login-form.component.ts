@@ -7,10 +7,9 @@ import { ButtonComponent } from '../../../../shared/atoms/button/button.componen
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
 
 @Component({
-  selector: 'app-login-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent],
-  template: `
+    selector: 'app-login-form',
+    imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent],
+    template: `
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <h2 class="login-form__title">Login to your account</h2>
       
@@ -46,7 +45,7 @@ import { AuthService } from '../../../../core/infrastructure/services/auth.servi
       </div>
     </form>
   `,
-  styles: [`
+    styles: [`
     .login-form {
       display: flex;
       flex-direction: column;

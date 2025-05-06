@@ -7,10 +7,9 @@ import { ButtonComponent } from '../../../../shared/atoms/button/button.componen
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
 
 @Component({
-  selector: 'app-register-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent],
-  template: `
+    selector: 'app-register-form',
+    imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent],
+    template: `
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
       <h2 class="register-form__title">Create an account</h2>
       
@@ -64,7 +63,7 @@ import { AuthService } from '../../../../core/infrastructure/services/auth.servi
       </div>
     </form>
   `,
-  styles: [`
+    styles: [`
     .register-form {
       display: flex;
       flex-direction: column;

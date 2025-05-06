@@ -3,10 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-input',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  template: `
+    selector: 'app-input',
+    imports: [CommonModule, ReactiveFormsModule],
+    template: `
     <div class="input-container">
       <label [for]="id" class="input-label">{{ label }}</label>
       <input
@@ -22,7 +21,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@a
       <div *ngIf="error" class="input-error">{{ error }}</div>
     </div>
   `,
-  styles: [`
+    styles: [`
     .input-container {
       display: flex;
       flex-direction: column;
@@ -59,13 +58,13 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@a
       font-size: 0.875rem;
     }
   `],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputComponent),
-      multi: true
-    }
-  ]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => InputComponent),
+            multi: true
+        }
+    ]
 })
 export class InputComponent implements ControlValueAccessor {
   @Input() label = '';
