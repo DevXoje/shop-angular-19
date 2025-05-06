@@ -1,13 +1,5 @@
-import { Component, input, output, model, inject } from '@angular/core';
-
+import { Component, input, output, model } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { FileUploadService } from '../../../core/infrastructure/services/file-upload.service';
-
-interface FileUploadResponse {
-  originalname: string;
-  filename: string;
-  location: string;
-}
 
 @Component({
   selector: 'app-file-input',
@@ -29,27 +21,27 @@ interface FileUploadResponse {
           <img [src]="previewUrl" alt="Preview" class="file-input__image">
           <button type="button" class="file-input__remove" (click)="removeFile()">×</button>
         </div>
-      }
-    
-      <div class="file-input__drop-zone"
-        [class.file-input__drop-zone--active]="isDragging"
-        (dragover)="onDragOver($event)"
-        (dragleave)="onDragLeave($event)"
-        (drop)="onDrop($event)">
-        <input
-          [id]="id()"
-          type="file"
-          [accept]="accept()"
-          (change)="onFileSelected($event)"
-          class="file-input__input"
-          >
-        <div class="file-input__content">
-          <svg class="file-input__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <p class="file-input__text">Drag and drop your image here, or click to select</p>
+      } @else {
+        <div class="file-input__drop-zone"
+          [class.file-input__drop-zone--active]="isDragging"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
+          <input
+            [id]="id()"
+            type="file"
+            [accept]="accept()"
+            (change)="onFileSelected($event)"
+            class="file-input__input"
+            >
+          <div class="file-input__content">
+            <svg class="file-input__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p class="file-input__text">Drag and drop your image here, or click to select</p>
+          </div>
         </div>
-      </div>
+      }
     
       @if (error()) {
         <div class="file-input__error">{{ error() }}</div>
@@ -164,25 +156,23 @@ interface FileUploadResponse {
   `]
 })
 export class FileInputComponent implements ControlValueAccessor {
-  private readonly fileUploadService = inject(FileUploadService);
-
   id = input('');
   label = input('');
   accept = input('image/*');
   error = model('');
 
-  fileSelected = output<string>();
+  fileSelected = output<File | null>();
 
   previewUrl: string | null = null;
   isDragging = false;
-  private onChange: (value: string | null) => void = () => {};
+  private onChange: (value: File | null) => void = () => {};
   private onTouched: () => void = () => {};
 
   writeValue(value: string | null): void {
     this.previewUrl = value;
   }
 
-  registerOnChange(fn: (value: string | null) => void): void {
+  registerOnChange(fn: (value: File | null) => void): void {
     this.onChange = fn;
   }
 
@@ -227,7 +217,7 @@ export class FileInputComponent implements ControlValueAccessor {
   removeFile(): void {
     this.previewUrl = null;
     this.onChange(null);
-    this.fileSelected.emit('');
+    this.fileSelected.emit(null);
   }
 
   private handleFile(file: File): void {
@@ -243,19 +233,8 @@ export class FileInputComponent implements ControlValueAccessor {
     };
     reader.readAsDataURL(file);
 
-    // Upload the file
-    this.fileUploadService.uploadFile(file).subscribe({
-      next: (response: FileUploadResponse) => {
-        this.onChange(response.location);
-        this.fileSelected.emit(response.location);
-        this.error.set('');
-      },
-      error: (error: unknown) => {
-        this.error.set('Failed to upload image. Please try again.');
-        this.previewUrl = null;
-        this.onChange(null);
-        this.fileSelected.emit('');
-      }
-    });
+    this.onChange(file);
+    this.fileSelected.emit(file);
+    this.error.set('');
   }
 } 

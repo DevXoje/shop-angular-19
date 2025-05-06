@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
-
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { InputComponent } from '../../../../shared/atoms/input/input.component';
 import { ButtonComponent } from '../../../../shared/atoms/button/button.component';
 import { FileInputComponent } from '../../../../shared/atoms/file-input/file-input.component';
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
+import { FileUploadService } from '../../../../core/infrastructure/services/file-upload.service';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
+import { switchMap } from 'rxjs';
 
 interface RegisterFormData {
   email: string;
@@ -145,13 +146,14 @@ interface RegisterFormData {
 export class RegisterFormComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly fileUploadService = inject(FileUploadService);
   private readonly router = inject(Router);
 
   registerForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     name: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-    avatar: ['', [Validators.required]]
+    avatar: [null, [Validators.required]]
   });
 
   loading = false;
@@ -173,8 +175,8 @@ export class RegisterFormComponent {
     return '';
   }
 
-  onAvatarSelected(url: string): void {
-    this.registerForm.patchValue({ avatar: url });
+  onAvatarSelected(file: File): void {
+    this.registerForm.patchValue({ avatar: file });
   }
 
   onSubmit(): void {
@@ -182,9 +184,19 @@ export class RegisterFormComponent {
       this.loading = true;
       this.error = '';
 
-      const formData: RegisterFormData = this.registerForm.value;
+      const formData = this.registerForm.value;
+      const avatarFile = formData.avatar as File;
 
-      this.authService.register(formData).subscribe({
+      // First upload the file, then register the user
+      this.fileUploadService.uploadFile(avatarFile).pipe(
+        switchMap(response => {
+          const registerData: RegisterFormData = {
+            ...formData,
+            avatar: response.location
+          };
+          return this.authService.register(registerData);
+        })
+      ).subscribe({
         next: () => {
           this.router.navigate(['/']);
         },
