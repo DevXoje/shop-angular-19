@@ -1,9 +1,9 @@
 import { Component,input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
     selector: 'app-button',
-    imports: [CommonModule],
+    imports: [],
     template: `
     <button
       [type]="type()"
@@ -13,11 +13,13 @@ import { CommonModule } from '@angular/common';
       [class.button--primary]="variant() === 'primary'"
       [class.button--secondary]="variant() === 'secondary'"
       [class.button--loading]="loading()"
-    >
-      <span *ngIf="loading()" class="button__loader"></span>
+      >
+      @if (loading()) {
+        <span class="button__loader"></span>
+      }
       <ng-content></ng-content>
     </button>
-  `,
+    `,
     styles: [`
     .button {
       display: inline-flex;

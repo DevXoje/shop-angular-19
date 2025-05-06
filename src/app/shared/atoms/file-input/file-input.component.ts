@@ -1,11 +1,11 @@
 import { Component, input, output, model} from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-file-input',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -16,24 +16,26 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
   template: `
     <div class="file-input">
       <label [for]="id()" class="file-input__label">{{ label() }}</label>
-      
-      <div class="file-input__preview" *ngIf="previewUrl">
-        <img [src]="previewUrl" alt="Preview" class="file-input__image">
-        <button type="button" class="file-input__remove" (click)="removeFile()">×</button>
-      </div>
-
-      <div class="file-input__drop-zone" 
-           [class.file-input__drop-zone--active]="isDragging"
-           (dragover)="onDragOver($event)"
-           (dragleave)="onDragLeave($event)"
-           (drop)="onDrop($event)">
+    
+      @if (previewUrl) {
+        <div class="file-input__preview">
+          <img [src]="previewUrl" alt="Preview" class="file-input__image">
+          <button type="button" class="file-input__remove" (click)="removeFile()">×</button>
+        </div>
+      }
+    
+      <div class="file-input__drop-zone"
+        [class.file-input__drop-zone--active]="isDragging"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)">
         <input
           [id]="id()"
           type="file"
           [accept]="accept()"
           (change)="onFileSelected($event)"
           class="file-input__input"
-        >
+          >
         <div class="file-input__content">
           <svg class="file-input__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -41,10 +43,12 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
           <p class="file-input__text">Drag and drop your image here, or click to select</p>
         </div>
       </div>
-
-      <div *ngIf="error()" class="file-input__error">{{ error() }}</div>
+    
+      @if (error()) {
+        <div class="file-input__error">{{ error() }}</div>
+      }
     </div>
-  `,
+    `,
   styles: [`
     .file-input {
       display: flex;

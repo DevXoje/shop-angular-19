@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { InputComponent } from '../../../../shared/atoms/input/input.component';
@@ -12,19 +12,18 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
     selector: 'app-register-form',
     standalone: true,
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        InputComponent,
-        ButtonComponent,
-        FileInputComponent,
-        RouterModule,
-        AuthLayoutComponent
-    ],
+    ReactiveFormsModule,
+    InputComponent,
+    ButtonComponent,
+    FileInputComponent,
+    RouterModule,
+    AuthLayoutComponent
+],
     template: `
     <app-auth-layout>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
         <h2 class="register-form__title">Create an account</h2>
-        
+    
         <app-input
           formControlName="email"
           label="Email"
@@ -33,7 +32,7 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
           placeholder="Enter your email"
           [error]="getErrorMessage('email')"
         ></app-input>
-
+    
         <app-input
           formControlName="name"
           label="Name"
@@ -42,7 +41,7 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
           placeholder="Enter your name"
           [error]="getErrorMessage('name')"
         ></app-input>
-
+    
         <app-input
           formControlName="password"
           label="Password"
@@ -51,7 +50,7 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
           placeholder="Enter your password"
           [error]="getErrorMessage('password')"
         ></app-input>
-
+    
         <app-file-input
           formControlName="avatar"
           label="Profile Picture"
@@ -59,27 +58,29 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
           [error]="getErrorMessage('avatar')"
           (fileSelected)="onAvatarSelected($event)"
         ></app-file-input>
-
+    
         <app-button
           type="submit"
           variant="primary"
           [loading]="loading"
           [disabled]="registerForm.invalid"
-        >
+          >
           Sign Up
         </app-button>
-
-        <div *ngIf="error" class="register-form__error">
-          {{ error }}
-        </div>
-
+    
+        @if (error) {
+          <div class="register-form__error">
+            {{ error }}
+          </div>
+        }
+    
         <div class="register-form__footer">
           <p class="register-form__text">Already have an account?</p>
           <a routerLink="/auth/login" class="register-form__link">Sign in</a>
         </div>
       </form>
     </app-auth-layout>
-  `,
+    `,
     styles: [`
     .register-form {
       display: flex;

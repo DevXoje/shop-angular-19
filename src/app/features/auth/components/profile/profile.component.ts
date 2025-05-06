@@ -10,32 +10,32 @@ import { AuthService } from '../../../../core/infrastructure/services/auth.servi
     template: `
     <div class="profile">
       <h2 class="profile__title">Profile</h2>
-      
-      <div class="profile__info" *ngIf="user$ | async as user">
-        <div class="profile__field">
-          <span class="profile__label">Email:</span>
-          <span class="profile__value">{{ user.email }}</span>
+    
+      @if (user$ | async; as user) {
+        <div class="profile__info">
+          <div class="profile__field">
+            <span class="profile__label">Email:</span>
+            <span class="profile__value">{{ user.email }}</span>
+          </div>
+          <div class="profile__field">
+            <span class="profile__label">Name:</span>
+            <span class="profile__value">{{ user.name }} </span>
+          </div>
+          <div class="profile__field">
+            <span class="profile__label">Role:</span>
+            <span class="profile__value">{{ user.role }}</span>
+          </div>
         </div>
-        
-        <div class="profile__field">
-          <span class="profile__label">Name:</span>
-          <span class="profile__value">{{ user.name }} </span>
-        </div>
-        
-        <div class="profile__field">
-          <span class="profile__label">Role:</span>
-          <span class="profile__value">{{ user.role }}</span>
-        </div>
-      </div>
-
+      }
+    
       <app-button
         variant="secondary"
         (clicked)="onLogout()"
-      >
+        >
         Logout
       </app-button>
     </div>
-  `,
+    `,
     styles: [`
     .profile {
       display: flex;

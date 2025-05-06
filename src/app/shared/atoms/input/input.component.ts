@@ -1,10 +1,10 @@
 import { Component, forwardRef, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-input',
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule],
     template: `
     <div class="input-container">
       <label [for]="id()" class="input-label">{{ label() }}</label>
@@ -17,10 +17,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@a
         (input)="onInput($event)"
         (blur)="onBlur()"
         class="input-field"
-      />
-      <div *ngIf="error()" class="input-error">{{ error() }}</div>
+        />
+      @if (error()) {
+        <div class="input-error">{{ error() }}</div>
+      }
     </div>
-  `,
+    `,
     styles: [`
     .input-container {
       display: flex;
