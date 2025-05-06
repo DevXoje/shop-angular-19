@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component,input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,15 +6,15 @@ import { CommonModule } from '@angular/common';
     imports: [CommonModule],
     template: `
     <button
-      [type]="type"
-      [disabled]="disabled || loading"
+      [type]="type()"
+      [disabled]="disabled() || loading()"
       (click)="onClick()"
       class="button"
-      [class.button--primary]="variant === 'primary'"
-      [class.button--secondary]="variant === 'secondary'"
-      [class.button--loading]="loading"
+      [class.button--primary]="variant() === 'primary'"
+      [class.button--secondary]="variant() === 'secondary'"
+      [class.button--loading]="loading()"
     >
-      <span *ngIf="loading" class="button__loader"></span>
+      <span *ngIf="loading()" class="button__loader"></span>
       <ng-content></ng-content>
     </button>
   `,
@@ -80,14 +80,14 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class ButtonComponent {
-  @Input() type: 'button' | 'submit' | 'reset' = 'button';
-  @Input() variant: 'primary' | 'secondary' = 'primary';
-  @Input() disabled = false;
-  @Input() loading = false;
-  @Output() clicked = new EventEmitter<void>();
+  type = input<'button' | 'submit' | 'reset'>('button');
+  variant = input<'primary' | 'secondary'>('primary');
+  disabled = input(false);
+  loading = input(false);
+  clicked = output<void>();
 
   onClick(): void {
-    if (!this.disabled && !this.loading) {
+    if (!this.disabled() && !this.loading()) {
       this.clicked.emit();
     }
   }

@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, forwardRef, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
@@ -7,18 +7,18 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@a
     imports: [CommonModule, ReactiveFormsModule],
     template: `
     <div class="input-container">
-      <label [for]="id" class="input-label">{{ label }}</label>
+      <label [for]="id()" class="input-label">{{ label() }}</label>
       <input
-        [type]="type"
-        [id]="id"
+        [type]="type()"
+        [id]="id()"
         [value]="value"
-        [placeholder]="placeholder"
+        [placeholder]="placeholder()"
         [disabled]="disabled"
         (input)="onInput($event)"
         (blur)="onBlur()"
         class="input-field"
       />
-      <div *ngIf="error" class="input-error">{{ error }}</div>
+      <div *ngIf="error()" class="input-error">{{ error() }}</div>
     </div>
   `,
     styles: [`
@@ -67,11 +67,11 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@a
     ]
 })
 export class InputComponent implements ControlValueAccessor {
-  @Input() label = '';
-  @Input() type = 'text';
-  @Input() placeholder = '';
-  @Input() id = '';
-  @Input() error = '';
+  label = input('');
+  type = input('text');
+  placeholder = input('');
+  id = input('');
+  error = input('');
 
   value = '';
   disabled = false;

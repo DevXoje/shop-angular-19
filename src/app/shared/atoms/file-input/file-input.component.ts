@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output, model} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -15,7 +15,7 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
   ],
   template: `
     <div class="file-input">
-      <label [for]="id" class="file-input__label">{{ label }}</label>
+      <label [for]="id()" class="file-input__label">{{ label() }}</label>
       
       <div class="file-input__preview" *ngIf="previewUrl">
         <img [src]="previewUrl" alt="Preview" class="file-input__image">
@@ -28,9 +28,9 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
            (dragleave)="onDragLeave($event)"
            (drop)="onDrop($event)">
         <input
-          [id]="id"
+          [id]="id()"
           type="file"
-          [accept]="accept"
+          [accept]="accept()"
           (change)="onFileSelected($event)"
           class="file-input__input"
         >
@@ -42,7 +42,7 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
         </div>
       </div>
 
-      <div *ngIf="error" class="file-input__error">{{ error }}</div>
+      <div *ngIf="error()" class="file-input__error">{{ error() }}</div>
     </div>
   `,
   styles: [`
@@ -153,12 +153,12 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
   `]
 })
 export class FileInputComponent implements ControlValueAccessor {
-  @Input() id = '';
-  @Input() label = '';
-  @Input() accept = 'image/*';
-  @Input() error = '';
+  id = input('');
+  label = input('');
+  accept = input('image/*');
+  error = model('');
 
-  @Output() fileSelected = new EventEmitter<string>();
+  fileSelected = output<string>();
 
   previewUrl: string | null = null;
   isDragging = false;
@@ -219,7 +219,7 @@ export class FileInputComponent implements ControlValueAccessor {
 
   private handleFile(file: File): void {
     if (!file.type.startsWith('image/')) {
-      this.error = 'Please select an image file';
+      this.error.set('Please select an image file');
       return;
     }
 
@@ -229,7 +229,7 @@ export class FileInputComponent implements ControlValueAccessor {
       this.previewUrl = base64;
       this.onChange(base64);
       this.fileSelected.emit(base64);
-      this.error = '';
+      this.error.set('');
     };
     reader.readAsDataURL(file);
   }
