@@ -1,3 +1,7 @@
 #!/usr/bin/env sh
 
+# Run tests
+npm run test:ci
+
+# Run lint-staged
 npx lint-staged --concurrent false
