@@ -8,13 +8,7 @@ import { AuthService } from '../../../../core/infrastructure/services/auth.servi
 import { FileUploadService } from '../../../../core/infrastructure/services/file-upload.service';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 import { switchMap } from 'rxjs';
-
-interface RegisterFormData {
-  email: string;
-  name: string;
-  password: string;
-  avatar: string;
-}
+import { RegisterFormData, RegisterFormField } from './register-form.types';
 
 @Component({
   selector: 'app-register-form',
@@ -33,37 +27,37 @@ interface RegisterFormData {
         <h2 class="register-form__title">Create an account</h2>
 
         <app-input
-          formControlName="email"
+          [formControlName]="RegisterFormField.Email"
           label="Email"
           type="email"
           id="email"
           placeholder="Enter your email"
-          [error]="getErrorMessage('email')"
+          [error]="getErrorMessage(RegisterFormField.Email)"
         ></app-input>
 
         <app-input
-          formControlName="name"
+          [formControlName]="RegisterFormField.Name"
           label="Name"
           type="text"
           id="name"
           placeholder="Enter your name"
-          [error]="getErrorMessage('name')"
+          [error]="getErrorMessage(RegisterFormField.Name)"
         ></app-input>
 
         <app-input
-          formControlName="password"
+          [formControlName]="RegisterFormField.Password"
           label="Password"
           type="password"
           id="password"
           placeholder="Enter your password"
-          [error]="getErrorMessage('password')"
+          [error]="getErrorMessage(RegisterFormField.Password)"
         ></app-input>
 
         <app-file-input
-          formControlName="avatar"
+          [formControlName]="RegisterFormField.Avatar"
           label="Profile Picture"
           id="avatar"
-          [error]="getErrorMessage('avatar')"
+          [error]="getErrorMessage(RegisterFormField.Avatar)"
           (fileSelected)="onAvatarSelected($event)"
         ></app-file-input>
 
@@ -148,22 +142,24 @@ interface RegisterFormData {
   ],
 })
 export class RegisterFormComponent {
+  protected readonly RegisterFormField = RegisterFormField;
+
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly fileUploadService = inject(FileUploadService);
   private readonly router = inject(Router);
 
   registerForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    name: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    avatar: [null, [Validators.required]],
+    [RegisterFormField.Email]: ['', [Validators.required, Validators.email]],
+    [RegisterFormField.Name]: ['', [Validators.required]],
+    [RegisterFormField.Password]: ['', [Validators.required, Validators.minLength(6)]],
+    [RegisterFormField.Avatar]: [null, [Validators.required]],
   });
 
   loading = false;
   error = '';
 
-  getErrorMessage(controlName: string): string {
+  getErrorMessage(controlName: RegisterFormField): string {
     const control = this.registerForm.get(controlName);
     if (!control?.errors || !control.touched) return '';
 
@@ -180,7 +176,7 @@ export class RegisterFormComponent {
   }
 
   onAvatarSelected(file: File | null): void {
-    this.registerForm.patchValue({ avatar: file });
+    this.registerForm.patchValue({ [RegisterFormField.Avatar]: file });
   }
 
   onSubmit(): void {
@@ -189,7 +185,7 @@ export class RegisterFormComponent {
       this.error = '';
 
       const formData = this.registerForm.value;
-      const avatarFile = formData.avatar as File;
+      const avatarFile = formData[RegisterFormField.Avatar] as File;
 
       // First upload the file, then register the user
       this.fileUploadService
@@ -198,7 +194,7 @@ export class RegisterFormComponent {
           switchMap(response => {
             const registerData: RegisterFormData = {
               ...formData,
-              avatar: response.location,
+              [RegisterFormField.Avatar]: response.location,
             };
             return this.authService.register(registerData);
           }),
