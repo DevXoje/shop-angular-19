@@ -19,7 +19,7 @@ import { AuthService } from '../../../../core/infrastructure/services/auth.servi
         
         <div class="profile__field">
           <span class="profile__label">Name:</span>
-          <span class="profile__value">{{ user.firstName }} {{ user.lastName }}</span>
+          <span class="profile__value">{{ user.name }} </span>
         </div>
         
         <div class="profile__field">

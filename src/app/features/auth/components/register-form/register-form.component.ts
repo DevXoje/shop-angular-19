@@ -4,13 +4,22 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { InputComponent } from '../../../../shared/atoms/input/input.component';
 import { ButtonComponent } from '../../../../shared/atoms/button/button.component';
+import { FileInputComponent } from '../../../../shared/atoms/file-input/file-input.component';
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 
 @Component({
     selector: 'app-register-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent, RouterModule, AuthLayoutComponent],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        InputComponent,
+        ButtonComponent,
+        FileInputComponent,
+        RouterModule,
+        AuthLayoutComponent
+    ],
     template: `
     <app-auth-layout>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
@@ -26,21 +35,12 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
         ></app-input>
 
         <app-input
-          formControlName="firstName"
-          label="First Name"
+          formControlName="name"
+          label="Name"
           type="text"
-          id="firstName"
-          placeholder="Enter your first name"
-          [error]="getErrorMessage('firstName')"
-        ></app-input>
-
-        <app-input
-          formControlName="lastName"
-          label="Last Name"
-          type="text"
-          id="lastName"
-          placeholder="Enter your last name"
-          [error]="getErrorMessage('lastName')"
+          id="name"
+          placeholder="Enter your name"
+          [error]="getErrorMessage('name')"
         ></app-input>
 
         <app-input
@@ -51,6 +51,14 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
           placeholder="Enter your password"
           [error]="getErrorMessage('password')"
         ></app-input>
+
+        <app-file-input
+          formControlName="avatar"
+          label="Profile Picture"
+          id="avatar"
+          [error]="getErrorMessage('avatar')"
+          (fileSelected)="onAvatarSelected($event)"
+        ></app-file-input>
 
         <app-button
           type="submit"
@@ -133,9 +141,9 @@ export class RegisterFormComponent {
 
   registerForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    firstName: ['', [Validators.required]],
-    lastName: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    name: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    avatar: ['', [Validators.required]]
   });
 
   loading = false;
@@ -155,6 +163,10 @@ export class RegisterFormComponent {
       return 'Password must be at least 6 characters';
     }
     return '';
+  }
+
+  onAvatarSelected(base64: string): void {
+    this.registerForm.patchValue({ avatar: base64 });
   }
 
   onSubmit(): void {

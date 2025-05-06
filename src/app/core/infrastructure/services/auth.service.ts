@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { IAuthService } from '../../domain/services/auth.service.interface';
-import { User, UserCredentials, AuthResponse } from '../../domain/models/user.model';
+import { User, UserCredentials, AuthResponse, UserRegister } from '../../domain/models/user.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -10,7 +10,8 @@ import { environment } from '../../../../environments/environment';
 })
 export class AuthService implements IAuthService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly authUrl = `${environment.apiUrl}/auth`;
+  private readonly usersUrl = `${environment.apiUrl}/users`;
   
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -20,19 +21,21 @@ export class AuthService implements IAuthService {
   }
 
   login(credentials: UserCredentials): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+    return this.http.post<AuthResponse>(`${this.authUrl}/login`, credentials).pipe(
       tap(response => this.handleAuthResponse(response))
     );
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
-      tap(() => this.clearAuthData())
-    );
+    this.clearAuthData();
+    return new Observable<void>(observer => {
+      observer.next();
+      observer.complete();
+    });
   }
 
-  register(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'> & { password: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, user).pipe(
+  register(user: UserRegister): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.usersUrl}`, user).pipe(
       tap(response => this.handleAuthResponse(response))
     );
   }
@@ -50,22 +53,32 @@ export class AuthService implements IAuthService {
   }
 
   private handleAuthResponse(response: AuthResponse): void {
-    localStorage.setItem('token', response.token);
-    this.currentUserSubject.next(response.user);
+    localStorage.setItem('access_token', response.access_token);
+    localStorage.setItem('refresh_token', response.refresh_token);
+    this.fetchUserProfile();
   }
 
   private clearAuthData(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     this.currentUserSubject.next(null);
   }
 
   private loadStoredUser(): void {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (token) {
-      this.http.get<User>(`${this.apiUrl}/me`).subscribe({
-        next: (user) => this.currentUserSubject.next(user),
-        error: () => this.clearAuthData()
-      });
+      this.fetchUserProfile();
     }
+  }
+
+  private fetchUserProfile(): void {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    this.http.get<User>(`${this.authUrl}/profile`, { headers }).subscribe({
+      next: (user) => this.currentUserSubject.next(user),
+      error: () => this.clearAuthData()
+    });
   }
 } 
