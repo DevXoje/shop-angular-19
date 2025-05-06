@@ -1,56 +1,64 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { InputComponent } from '../../../../shared/atoms/input/input.component';
 import { ButtonComponent } from '../../../../shared/atoms/button/button.component';
 import { AuthService } from '../../../../core/infrastructure/services/auth.service';
+import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 
 @Component({
     selector: 'app-login-form',
-    imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent],
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent, RouterModule, AuthLayoutComponent],
     template: `
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <h2 class="login-form__title">Login to your account</h2>
-      
-      <app-input
-        formControlName="email"
-        label="Email"
-        type="email"
-        id="email"
-        placeholder="Enter your email"
-        [error]="getErrorMessage('email')"
-      ></app-input>
+    <app-auth-layout>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <h2 class="login-form__title">Login to your account</h2>
+        
+        <app-input
+          formControlName="email"
+          label="Email"
+          type="email"
+          id="email"
+          placeholder="Enter your email"
+          [error]="getErrorMessage('email')"
+        ></app-input>
 
-      <app-input
-        formControlName="password"
-        label="Password"
-        type="password"
-        id="password"
-        placeholder="Enter your password"
-        [error]="getErrorMessage('password')"
-      ></app-input>
+        <app-input
+          formControlName="password"
+          label="Password"
+          type="password"
+          id="password"
+          placeholder="Enter your password"
+          [error]="getErrorMessage('password')"
+        ></app-input>
 
-      <app-button
-        type="submit"
-        variant="primary"
-        [loading]="loading"
-        [disabled]="loginForm.invalid"
-      >
-        Sign In
-      </app-button>
+        <app-button
+          type="submit"
+          variant="primary"
+          [loading]="loading"
+          [disabled]="loginForm.invalid"
+        >
+          Sign In
+        </app-button>
 
-      <div *ngIf="error" class="login-form__error">
-        {{ error }}
-      </div>
-    </form>
+        <div *ngIf="error" class="login-form__error">
+          {{ error }}
+        </div>
+
+        <div class="login-form__footer">
+          <p class="login-form__text">Don't have an account?</p>
+          <a routerLink="/auth/register" class="login-form__link">Create an account</a>
+        </div>
+      </form>
+    </app-auth-layout>
   `,
     styles: [`
     .login-form {
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
-      max-width: 400px;
       width: 100%;
       padding: 2rem;
       background-color: white;
@@ -70,6 +78,33 @@ import { AuthService } from '../../../../core/infrastructure/services/auth.servi
       color: #DC2626;
       font-size: 0.875rem;
       text-align: center;
+    }
+
+    .login-form__footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .login-form__text {
+      color: #6B7280;
+      font-size: 0.875rem;
+      margin: 0;
+    }
+
+    .login-form__link {
+      color: #2563EB;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #1D4ED8;
+        text-decoration: underline;
+      }
     }
   `]
 })
